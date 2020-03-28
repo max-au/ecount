@@ -24,6 +24,7 @@
 
 -include_lib("common_test/include/ct.hrl").
 -include_lib("eunit/include/eunit.hrl").
+-include("ecount.hrl").
 
 suite() ->
     [{timetrap, {seconds, 5}}].
@@ -124,7 +125,7 @@ basic() ->
 
 basic(Config) when is_list(Config) ->
     {ok, _Pid} = ecount:start_link(),
-    ecount:count(basic),
+    ?C(basic),
     ?assertEqual(1, ecount:get(basic)),
     ecount:count(basic, 10),
     ?assertEqual(11, ecount:get(basic)),
@@ -142,7 +143,7 @@ large(_Config) ->
     ?assertEqual(maps:from_list(Expected), ecount:all()).
 
 parallel() ->
-    [{doc, "Test counting in parallel"}].
+    [{doc, "Test counting in parallel"}, {timetrap, {seconds, 10}}].
 
 parallel(_Config) ->
     {ok, _Pid} = ecount:start_link(),
