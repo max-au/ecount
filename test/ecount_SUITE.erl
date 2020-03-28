@@ -68,8 +68,8 @@ gather(Pids) ->
     end.
 
 %% Runs throughput benchmark
-benchmark(QLen, NumCounters, CounterType, NumProcesses, TimeMs) ->
-    {ok, CntPid} = ecount:start_link(),
+benchmark(Options, QLen, NumCounters, CounterType, NumProcesses, TimeMs) ->
+    {ok, CntPid} = ecount:start_link(Options),
     %% create counters mappings to processes
     Queues = [make_queue(QLen, NumCounters, CounterType, queue:new()) || _ <- lists:seq(1, NumProcesses)],
     %% set higher priority to get some better timing
@@ -85,14 +85,15 @@ benchmark(QLen, NumCounters, CounterType, NumProcesses, TimeMs) ->
     Result = lists:sum(maps:values(ecount:all())),
     %% clear up
     gen_server:stop(CntPid),
-    ct:pal("~s QPS with ~b qlen, ~b variety of ~s (~b processes)",
-        [format_number(Result * 1000 div TimeMs), QLen, NumCounters, CounterType, NumProcesses]),
+    ct:pal("~s QPS with ~b qlen, ~b variety of ~s (~b processes, ~p)",
+        [format_number(Result * 1000 div TimeMs), QLen, NumCounters, CounterType, NumProcesses, Options]),
     Result.
 
 make_queue(0, _NumCounters, _CounterType, Queue) ->
     Queue;
 make_queue(More, NumCounters, CounterType, Queue) ->
-    make_queue(More - 1, NumCounters, CounterType, queue:in(make_counter(NumCounters, CounterType), Queue)).
+    Name = make_counter(NumCounters, CounterType),
+    make_queue(More - 1, NumCounters, CounterType, queue:in(Name, Queue)).
 
 make_counter(NumCounters, atom) ->
     list_to_atom(lists:concat(["name_", rand:uniform(NumCounters)]));
@@ -107,7 +108,7 @@ make_counter(NumCounters, integer) ->
     rand:uniform(NumCounters).
 
 bench(Queue) ->
-    {Name, NewQ} = queue:out(Queue),
+    {{value, Name}, NewQ} = queue:out(Queue),
     ecount:count(Name),
     bench(queue:in(Name, NewQ)).
 
@@ -131,7 +132,7 @@ large() ->
 
 large(_Config) ->
     Counters = 2048, Shards = 32,
-    {ok, _Pid} = ecount:start_link(Counters div Shards),
+    {ok, _Pid} = ecount:start_link(#{chunk_size => Counters div Shards}),
     Expected = [{"counter_" ++ integer_to_list(N), rand:uniform(100)} || N <- lists:seq(1, Counters)],
     [ecount:count(N, C) || {N, C} <- Expected],
     ?assertEqual(maps:from_list(Expected), ecount:all()).
@@ -170,7 +171,14 @@ parallel(_Config) ->
 
 throughput() ->
     [{doc, "Test throughput - how many bumps are accepted (does not check correctness)"},
-        {timetrap, {seconds, 30}}].
+        {timetrap, {seconds, 60}}].
 
 throughput(_Config) ->
-    [benchmark(30, 1024, Type, 1024, 3000) || Type <- [atom, binary, string, tuple, integer]].
+    %% measure variants for 5 seconds
+    [
+        begin
+            NoPT = benchmark(#{}, 30, 1024, Type, 1024, 3000),
+            PT = benchmark(#{flush_after => 500}, 30, 1024, Type, 1024, 3000),
+            ?assert(PT > NoPT)
+        end
+        || Type <- [atom, binary, string, tuple, integer]].
