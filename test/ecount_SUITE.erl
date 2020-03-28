@@ -7,7 +7,8 @@
 
 -export([
     all/0,
-    suite/0
+    suite/0,
+    end_per_testcase/2
 ]).
 
 -export([
@@ -29,6 +30,9 @@ suite() ->
 
 all() ->
     [basic, large, parallel, throughput].
+
+end_per_testcase(_TestCase, _Config) ->
+    is_pid(whereis(ecount)) andalso gen_server:stop(ecount).
 
 %%--------------------------------------------------------------------
 %% Helper functions

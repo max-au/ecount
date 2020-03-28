@@ -1,7 +1,17 @@
 # ecount
 
 Simple Erlang counters, dynamically named.
-Requires Erlang/OTP 21.2 and above.
+
+[![Build Status](https://travis-ci.org/max-au/ecount.svg?token=AyPyNuyPQzyUKKZbqi6q&branch=master)](https://travis-ci.org/max-au/ecount)
+
+Build with rebar3:
+
+    rebar3 compile
+
+OTP versions support: 21.2 and above.
+
+## License
+License is available in the LICENSE file in the root directory of this source tree.
 
 ## Usage
 

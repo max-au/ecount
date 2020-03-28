@@ -8,6 +8,9 @@
 %%  * avoids potential degradation for atom hashing (leading to very
 %%    long lists in a single bucket)
 %%  * provides foundation for counters aggregation queries
+%% Yet is come at some noticeable cost when amount of counter names
+%%  is very large, and new names are constantly adding, blocking
+%%  persistent_term caching.
 %%
 %% When number of pre-allocated indices in current atomic array
 %%  is exhausted, another array is allocated. Allocation size is
