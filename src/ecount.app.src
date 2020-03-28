@@ -1,0 +1,16 @@
+{application, ecount,
+ [{description, "Simple Erlang counters, dynamically named"},
+  {vsn, "0.1.0"},
+  {registered, [ecount, ecount_sup]},
+  {mod, {ecount_app, []}},
+  {applications,
+   [kernel,
+    stdlib
+   ]},
+  {env, []},
+  {modules, []},
+
+  {licenses, ["BSD 3-clause clear"]},
+  {links, [{"GitHub", "https://github.com/max-au/ecount"}]}
+ ]}.
+
