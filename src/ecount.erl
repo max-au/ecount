@@ -1,30 +1,31 @@
-%%-------------------------------------------------------------------
-%% @copyright Maxim Fedorov <maximfca@gmail.com>
-%% @doc
-%% Dynamic Erlang counters, simplified example.
-%% Stores mapping of counter name to atomic array & index in an ETS
-%%  table.
-%% Table is ordered_set. This allows for a number of tricks:
-%%  * avoids potential degradation for atom hashing (leading to very
-%%    long lists in a single bucket)
-%%  * provides foundation for counters aggregation queries
-%% Yet is come at some noticeable cost when amount of counter names
-%%  is very large, and new names are constantly adding, blocking
-%%  persistent_term caching.
-%%
-%% When number of pre-allocated indices in current atomic array
-%%  is exhausted, another array is allocated. Allocation size is
-%%  always the same, decided upon server start, - while it is easy
-%%  to implement some "growth stages" algorithm (e.g. doubling amount
-%%  of counters to allocate next time), new array allocation is fast
-%%  enough to make smarted logic useless.
-%% However, it is possible to configure the size of each atomic chunk
-%%  allocated, when starting the server.
-%%
-%% Thanks @Bryan Naegele, for an idea to use persistent_term as a
-%%  caching layer for much faster counter name access.
-%% @end
-%%-------------------------------------------------------------------
+%%%-------------------------------------------------------------------
+%%% @author Maxim Fedorov <maximfca@gmail.com>
+%%% @copyright (c) Maxim Fedorov <maximfca@gmail.com>
+%%% @doc
+%%% Dynamic Erlang counters, simplified example.
+%%% Stores mapping of counter name to atomic array & index in an ETS
+%%%  table.
+%%% Table is ordered_set. This allows for a number of tricks:
+%%%  * avoids potential degradation for atom hashing (leading to very
+%%%    long lists in a single bucket)
+%%%  * provides foundation for counters aggregation queries
+%%% Yet is come at some noticeable cost when amount of counter names
+%%%  is very large, and new names are constantly adding, blocking
+%%%  persistent_term caching.
+%%%
+%%% When number of pre-allocated indices in current atomic array
+%%%  is exhausted, another array is allocated. Allocation size is
+%%%  always the same, decided upon server start, - while it is easy
+%%%  to implement some "growth stages" algorithm (e.g. doubling amount
+%%%  of counters to allocate next time), new array allocation is fast
+%%%  enough to make smarted logic useless.
+%%% However, it is possible to configure the size of each atomic chunk
+%%%  allocated, when starting the server.
+%%%
+%%% Thanks @Bryan Naegele, for an idea to use persistent_term as a
+%%%  caching layer for much faster counter name access.
+%%% @end
+%%%-------------------------------------------------------------------
 -module(ecount).
 -author("maximfca@gmail.com").
 
