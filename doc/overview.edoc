@@ -38,7 +38,7 @@ To fetch full map of counters with names and values, use
 ## Planned features
 
 This application is merely an example, missing many features needed for proper integration. There are plans to add:
- * name normalisation (e.g. 'counter.name', <<"counter.name">> and "counter.name" should be one counter)
+ * name normalisation (e.g. 'counter.name', &lt;&lt;"counter.name"&gt;&gt; and "counter.name" should be one counter)
  * composite names and aggregation ({aggregate, counter})
  * gauges
  * integration with external systems
