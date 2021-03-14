@@ -4,5 +4,6 @@ _build
 rebar3.crashdump
 .DS_Store
 doc/*.html
+doc/edoc-info
 doc/erlang.png
 doc/stylesheet.css
