@@ -10,7 +10,7 @@
 
 -export([start/2, stop/1]).
 
--spec start(application:start_type(), term()) -> {ok, pid()}.
+-spec start(application:start_type(), term()) -> {ok, pid()} | {'error', Reason :: term()}.
 start(_StartType, _StartArgs) ->
     ecount_sup:start_link().
 

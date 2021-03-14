@@ -100,13 +100,14 @@ count(Name, Incr) ->
                     % tough choice: cast or call?
                     % for cast, sender is unblocked, for call, it has to wait
                     % waiting is good if receiver may be overloaded
-                    gen_server:call(?MODULE, {count, Name, Incr})
+                    gen_server:call(?MODULE, {count, Name, Incr}),
+                    ok
             end
     end.
 
 %% @doc
 %% Returns a map of all counter names to their current values.
--spec all() -> [{name(), integer()}].
+-spec all() -> #{name() => integer()}.
 all() ->
     lists:foldl(
         fun ({Name, {Ref, Ix}}, Acc) ->
@@ -147,7 +148,7 @@ get(What) ->
 
 -type ecount_state() :: #ecount_state{}.
 
--spec init(pos_integer()) -> ecount_state().
+-spec init(options()) -> {ok, ecount_state()}.
 init(Options) ->
     ChunkSize = maps:get(chunk_size, Options, 512), %% hardcode what needs to be hardcoded
     FlushTimer = maps:get(flush_after, Options, 60000), %% flush every 60 seconds
@@ -189,7 +190,7 @@ handle_call(_Request, _From, _State) ->
 handle_cast(_Request, _State) ->
     error(badarg).
 
--spec handle_info(flush, ecount_state()) -> ecount_state().
+-spec handle_info({flush, integer()}, ecount_state()) -> {noreply, ecount_state()}.
 handle_info({flush, PrevCount}, #ecount_state{flush_timer = FlushTimer, total = PrevCount} = State) ->
     %% counter set did not change, check if persistent term contains a different amount
     map_size(persistent_term:get(?MODULE)) =/= PrevCount andalso
