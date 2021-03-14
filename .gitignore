@@ -3,3 +3,6 @@ _build
 *.iml
 rebar3.crashdump
 .DS_Store
+doc/*.html
+doc/erlang.png
+doc/stylesheet.css

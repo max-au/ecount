@@ -1,9 +1,8 @@
 %%%-------------------------------------------------------------------
 %%% @author Maxim Fedorov <maximfca@gmail.com>
-%%% @copyright (c) Maxim Fedorov <maximfca@gmail.com>
 %%% @doc
 %%% Dynamic Erlang counters, simplified example.
-%%% Stores mapping of counter name to atomic array & index in an ETS
+%%% Stores mapping of counter name to atomic array &amp; index in an ETS
 %%%  table.
 %%% Table is ordered_set. This allows for a number of tricks:
 %%%  * avoids potential degradation for atom hashing (leading to very
